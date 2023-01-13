@@ -35,7 +35,6 @@ final class LogInViewController: UIViewController {
         textField.autocapitalizationType = .none
         textField.textAlignment = .left
         textField.placeholder = "Email of phone"
-        textField.addTarget(self, action: #selector(statusTextChanged), for: .editingChanged)
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -57,7 +56,6 @@ final class LogInViewController: UIViewController {
         textField.textAlignment = .left
         textField.isSecureTextEntry = true
         textField.placeholder = "Password"
-        textField.addTarget(self, action: #selector(statusTextChanged), for: .editingChanged)
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -94,7 +92,7 @@ final class LogInViewController: UIViewController {
 
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: 1000)
+        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         scrollView.keyboardDismissMode = .interactive
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
@@ -119,6 +117,19 @@ final class LogInViewController: UIViewController {
         recognizer.numberOfTapsRequired = 1
         recognizer.numberOfTouchesRequired = 1
         scrollView.addGestureRecognizer(recognizer)
+
+        textFieldLogin.delegate = self
+        textFieldPassword.delegate = self
+
+        NotificationCenter.default.addObserver(self,
+            selector: #selector(adjustInsetForKeyboard(_:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(self,
+            selector: #selector(adjustInsetForKeyboard(_:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil)
     }
 
     private func installConstrains() {
@@ -155,33 +166,21 @@ final class LogInViewController: UIViewController {
         ])
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        subscribeKeyboardEvents()
+    @objc func adjustInsetForKeyboard(_ notification: NSNotification) {
+        guard let userInfo = notification.userInfo else { return }
+
+        let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+
+        let show = (notification.name == UIResponder.keyboardWillShowNotification) ? true : false
+
+        let bottomInset = (keyboardFrame.height + 20) * (show ? 1 : 0)
+        scrollView.contentInset.bottom = bottomInset
+        scrollView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
-    }
-
-    private func subscribeKeyboardEvents() {
-        NotificationCenter.default.addObserver(self, selector: #selector(kbWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(kbWillHide), name: UIResponder.keyboardDidHideNotification, object: nil)
-    }
-
-    @objc func kbWillShow(_ notification: Notification) {
-        guard let kbFrameSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        self.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: kbFrameSize.height - self.view.safeAreaInsets.bottom + 20, right: 0)
-
-    }
-
-    @objc func kbWillHide() {
-        self.scrollView.contentInset = .zero
-    }
-
-    @objc private func statusTextChanged() {
-        subscribeKeyboardEvents()
     }
 
     @objc func touch() {
@@ -216,6 +215,14 @@ final class LogInViewController: UIViewController {
 
         let profileViewController = ProfileViewController()
         self.navigationController?.pushViewController(profileViewController, animated: true)
+    }
+}
+
+extension LogInViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
 

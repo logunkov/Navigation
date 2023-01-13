@@ -66,14 +66,8 @@ final class ProfileViewController: UIViewController, TapLikedDelegate {
     }()
 
     private lazy var tapGestureRecognizerOneClick: UITapGestureRecognizer = {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.avatarOpened))
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(avatarOpened))
         tapGestureRecognizer.numberOfTapsRequired = 1
-        return tapGestureRecognizer
-    }()
-
-    private lazy var tapGestureRecognizerTwoClicks: UITapGestureRecognizer = {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.touch))
-        tapGestureRecognizer.numberOfTapsRequired = 2
         return tapGestureRecognizer
     }()
     
@@ -124,11 +118,6 @@ final class ProfileViewController: UIViewController, TapLikedDelegate {
 
     private func installRecognizer() {
         profileHeaderView.imageView.addGestureRecognizer(tapGestureRecognizerOneClick)
-        view.addGestureRecognizer(tapGestureRecognizerTwoClicks)
-    }
-
-    @objc func touch() {
-        self.view.endEditing(true)
     }
 
     private func getInvisibility() {

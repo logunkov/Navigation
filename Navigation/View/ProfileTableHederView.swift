@@ -88,6 +88,8 @@ final class ProfileHeaderView: UIView {
         self.addSubview(textField)
 
         installConstrains()
+
+        textField.delegate = self
     }
 
     required init?(coder: NSCoder) {
@@ -143,5 +145,12 @@ final class ProfileHeaderView: UIView {
             labelStatus.trailingAnchor.constraint(equalTo: button.trailingAnchor),
             labelStatus.bottomAnchor.constraint(equalTo: button.topAnchor, constant: -20)
         ])
+    }
+}
+
+extension ProfileHeaderView: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
