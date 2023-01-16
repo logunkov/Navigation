@@ -28,9 +28,6 @@ final class LogInViewController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.textColor = .black
         textField.backgroundColor = .systemGray6
-        textField.layer.cornerRadius = 10
-        textField.layer.borderWidth = 0.5
-        textField.layer.borderColor = UIColor.lightGray.cgColor
         textField.tintColor = UIColor.blue
         textField.autocapitalizationType = .none
         textField.textAlignment = .left
@@ -48,9 +45,6 @@ final class LogInViewController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.textColor = .black
         textField.backgroundColor = .systemGray6
-        textField.layer.cornerRadius = 10
-        textField.layer.borderWidth = 0.5
-        textField.layer.borderColor = UIColor.lightGray.cgColor
         textField.tintColor = UIColor.blue
         textField.autocapitalizationType = .none
         textField.textAlignment = .left
@@ -98,6 +92,20 @@ final class LogInViewController: UIViewController {
         return scrollView
     }()
 
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.alignment = .fill
+        stackView.spacing = 10
+        stackView.layer.cornerRadius = 10
+        stackView.layer.borderWidth = 0.5
+        stackView.layer.borderColor = UIColor.lightGray.cgColor
+        stackView.clipsToBounds = true
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -105,8 +113,9 @@ final class LogInViewController: UIViewController {
 
         self.view.backgroundColor = .white
         self.scrollView.addSubview(imageView)
-        self.scrollView.addSubview(textFieldLogin)
-        self.scrollView.addSubview(textFieldPassword)
+        self.scrollView.addSubview(stackView)
+        self.stackView.addArrangedSubview(textFieldLogin)
+        self.stackView.addArrangedSubview(textFieldPassword)
         self.scrollView.addSubview(button)
         self.scrollView.addSubview(labelError)
         self.view.addSubview(scrollView)
@@ -144,25 +153,20 @@ final class LogInViewController: UIViewController {
             imageView.widthAnchor.constraint(equalToConstant: 100),
             imageView.heightAnchor.constraint(equalToConstant: 100),
 
-            textFieldLogin.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 120),
-            textFieldLogin.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            textFieldLogin.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            textFieldLogin.heightAnchor.constraint(equalToConstant: 50),
+            stackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 120),
+            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            stackView.heightAnchor.constraint(equalToConstant: 100),
 
-            textFieldPassword.topAnchor.constraint(equalTo: textFieldLogin.bottomAnchor),
-            textFieldPassword.leadingAnchor.constraint(equalTo: textFieldLogin.leadingAnchor),
-            textFieldPassword.trailingAnchor.constraint(equalTo: textFieldLogin.trailingAnchor),
-            textFieldPassword.heightAnchor.constraint(equalTo: textFieldLogin.heightAnchor),
-
-            button.topAnchor.constraint(equalTo: textFieldPassword.bottomAnchor, constant: 16),
-            button.leadingAnchor.constraint(equalTo: textFieldLogin.leadingAnchor),
-            button.trailingAnchor.constraint(equalTo: textFieldLogin.trailingAnchor),
-            button.heightAnchor.constraint(equalTo: textFieldLogin.heightAnchor),
+            button.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 16),
+            button.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+            button.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            button.heightAnchor.constraint(equalToConstant: 50),
 
             labelError.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 16),
-            labelError.leadingAnchor.constraint(equalTo: textFieldLogin.leadingAnchor),
-            labelError.trailingAnchor.constraint(equalTo: textFieldLogin.trailingAnchor),
-            labelError.heightAnchor.constraint(equalTo: textFieldLogin.heightAnchor),
+            labelError.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+            labelError.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            labelError.heightAnchor.constraint(equalTo: stackView.heightAnchor),
         ])
     }
 

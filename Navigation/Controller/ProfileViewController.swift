@@ -192,7 +192,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource.count + 1
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "PhotosTableViewCell", for: indexPath) as! PhotosTableViewCell
@@ -217,17 +217,11 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         }
     }
-    
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = profileHeaderView
         headerView.backgroundColor = .lightGray
-        headerView.heightAnchor.constraint(equalToConstant: 225).isActive = true
-        
         return headerView
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 225
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

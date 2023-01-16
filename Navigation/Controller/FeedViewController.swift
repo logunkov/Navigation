@@ -35,7 +35,6 @@ final class FeedViewController: UIViewController {
 
     private let stackView: UIStackView = {
         let stackView = UIStackView()
-//        stackView.backgroundColor = .black
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.alignment = .fill
