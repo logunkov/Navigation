@@ -84,6 +84,13 @@ final class LogInViewController: UIViewController {
         return label
     }()
 
+    private let viewLogin: UIView = {
+        let viewLogin = UIView()
+        viewLogin.backgroundColor = UIColor.lightGray
+        viewLogin.translatesAutoresizingMaskIntoConstraints = false
+        return viewLogin
+    }()
+
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -95,9 +102,9 @@ final class LogInViewController: UIViewController {
     private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fillProportionally
         stackView.alignment = .fill
-        stackView.spacing = 10
+        stackView.spacing = 0
         stackView.layer.cornerRadius = 10
         stackView.layer.borderWidth = 0.5
         stackView.layer.borderColor = UIColor.lightGray.cgColor
@@ -115,6 +122,7 @@ final class LogInViewController: UIViewController {
         self.scrollView.addSubview(imageView)
         self.scrollView.addSubview(stackView)
         self.stackView.addArrangedSubview(textFieldLogin)
+        self.stackView.addArrangedSubview(viewLogin)
         self.stackView.addArrangedSubview(textFieldPassword)
         self.scrollView.addSubview(button)
         self.scrollView.addSubview(labelError)
@@ -167,6 +175,8 @@ final class LogInViewController: UIViewController {
             labelError.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
             labelError.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             labelError.heightAnchor.constraint(equalTo: stackView.heightAnchor),
+
+            viewLogin.heightAnchor.constraint(equalToConstant: 0.5),
         ])
     }
 
