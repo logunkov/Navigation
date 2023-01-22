@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		BD1E9298295C46B700F039EA /* ShowPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1E9297295C46B700F039EA /* ShowPostViewController.swift */; };
 		BDB4B36A29384A480035F4EC /* ProfileTableHederView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB4B36929384A480035F4EC /* ProfileTableHederView.swift */; };
+		BDC5BBBC296EAB0900FF72C0 /* TapLikedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC5BBBB296EAB0900FF72C0 /* TapLikedDelegate.swift */; };
 		BDC9B41029418373003A4163 /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC9B40F29418373003A4163 /* LogInViewController.swift */; };
 		BDC9B4222948226D003A4163 /* PostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC9B4212948226D003A4163 /* PostTableViewCell.swift */; };
 		BDC9B42D2949DE5F003A4163 /* PhotosTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC9B42C2949DE5F003A4163 /* PhotosTableViewCell.swift */; };
@@ -28,6 +29,7 @@
 /* Begin PBXFileReference section */
 		BD1E9297295C46B700F039EA /* ShowPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowPostViewController.swift; sourceTree = "<group>"; };
 		BDB4B36929384A480035F4EC /* ProfileTableHederView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableHederView.swift; sourceTree = "<group>"; };
+		BDC5BBBB296EAB0900FF72C0 /* TapLikedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapLikedDelegate.swift; sourceTree = "<group>"; };
 		BDC9B40F29418373003A4163 /* LogInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
 		BDC9B4212948226D003A4163 /* PostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewCell.swift; sourceTree = "<group>"; };
 		BDC9B42C2949DE5F003A4163 /* PhotosTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosTableViewCell.swift; sourceTree = "<group>"; };
@@ -116,6 +118,14 @@
 			path = Controller;
 			sourceTree = "<group>";
 		};
+		BDC5BBBA296EAAE100FF72C0 /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				BDC5BBBB296EAB0900FF72C0 /* TapLikedDelegate.swift */,
+			);
+			path = Protocol;
+			sourceTree = "<group>";
+		};
 		BDEC520E2930ABF200119354 = {
 			isa = PBXGroup;
 			children = (
@@ -139,6 +149,7 @@
 				BD1E928B29555E3700F039EA /* View */,
 				BD1E928C29555E5100F039EA /* Controller */,
 				BD1E928829555D6400F039EA /* Cells */,
+				BDC5BBBA296EAAE100FF72C0 /* Protocol */,
 				BD1E928729555D3700F039EA /* Supporting Files */,
 				BD1E928929555D9C00F039EA /* Resources */,
 			);
@@ -219,6 +230,7 @@
 				BDC9B41029418373003A4163 /* LogInViewController.swift in Sources */,
 				BDC9B42D2949DE5F003A4163 /* PhotosTableViewCell.swift in Sources */,
 				BDC9B437294ACC72003A4163 /* PhotosCollectionViewCell.swift in Sources */,
+				BDC5BBBC296EAB0900FF72C0 /* TapLikedDelegate.swift in Sources */,
 				BDEC52592930CA1000119354 /* ProfileViewController.swift in Sources */,
 				BDEC526529311C5700119354 /* InfoViewController.swift in Sources */,
 				BDEC52622930F05600119354 /* Post.swift in Sources */,

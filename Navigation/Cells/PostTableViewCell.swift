@@ -8,6 +8,9 @@
 import UIKit
 
 final class PostTableViewCell: UITableViewCell {
+
+    var idPost: Int = -1
+    var likeDelegate: TapLikedDelegate?
     
     var author: UILabel = {
         let label = UILabel()
@@ -40,6 +43,7 @@ final class PostTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textColor = .black
+        label.isUserInteractionEnabled = true
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -52,41 +56,18 @@ final class PostTableViewCell: UITableViewCell {
         return label
     }()
 
-    private let stackViewHeaderVertical: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 16
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
+    private let tapGestureRecognizer = UITapGestureRecognizer()
 
-    private let stackViewVertical: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 16
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-    
-    private let stackViewHorizontal: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.spacing = 16
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(author)
         contentView.addSubview(imageNews)
-        contentView.addSubview(stackViewVertical)
-        stackViewVertical.addArrangedSubview(descriptionText)
-        stackViewVertical.addArrangedSubview(stackViewHorizontal)
-        stackViewHorizontal.addArrangedSubview(likes)
-        stackViewHorizontal.addArrangedSubview(views)
-        
+        contentView.addSubview(descriptionText)
+        contentView.addSubview(likes)
+        contentView.addSubview(views)
+
         installConstrains()
+        installRecognizer()
     }
     
     required init?(coder: NSCoder) {
@@ -106,12 +87,23 @@ final class PostTableViewCell: UITableViewCell {
             imageNews.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageNews.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             imageNews.topAnchor.constraint(equalTo: author.bottomAnchor, constant: 16),
-            imageNews.bottomAnchor.constraint(equalTo: stackViewVertical.topAnchor, constant: -16),
 
-            stackViewVertical.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            stackViewVertical.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            stackViewVertical.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            descriptionText.leadingAnchor.constraint(equalTo: author.leadingAnchor),
+            descriptionText.trailingAnchor.constraint(equalTo: author.trailingAnchor),
+            descriptionText.topAnchor.constraint(equalTo: imageNews.bottomAnchor, constant: 16),
+
+            likes.leadingAnchor.constraint(equalTo: author.leadingAnchor),
+            likes.topAnchor.constraint(equalTo: descriptionText.bottomAnchor, constant: 16),
+
+            views.trailingAnchor.constraint(equalTo: author.trailingAnchor),
+            views.topAnchor.constraint(equalTo: descriptionText.bottomAnchor, constant: 16),
+            views.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
         ])
+    }
+
+    private func installRecognizer() {
+        self.tapGestureRecognizer.addTarget(self, action: #selector(tapLiked))
+        self.likes.addGestureRecognizer(self.tapGestureRecognizer)
     }
 
     override func prepareForReuse() {
@@ -121,5 +113,9 @@ final class PostTableViewCell: UITableViewCell {
         descriptionText.text = nil
         likes.text = nil
         views.text = nil
+    }
+
+    @objc func tapLiked() {
+        likeDelegate?.tapLiked(index: idPost, numberOfClicks: 1)
     }
 }

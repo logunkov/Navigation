@@ -9,7 +9,11 @@ import UIKit
 
 final class ShowPostViewController: UIViewController {
 
-    var author: UILabel = {
+    var idPost: Int = -1
+    var likeDelegate: TapLikedDelegate?
+    private var numberOfClicks = 0
+
+    let author: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textColor = .black
@@ -18,7 +22,7 @@ final class ShowPostViewController: UIViewController {
         return label
     }()
 
-    var descriptionText: UILabel = {
+    let descriptionText: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.textColor = .systemGray
@@ -28,7 +32,7 @@ final class ShowPostViewController: UIViewController {
         return label
     }()
 
-    var imageNews: UIImageView = {
+    let imageNews: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .black
         imageView.contentMode = .scaleAspectFit
@@ -36,17 +40,16 @@ final class ShowPostViewController: UIViewController {
         return imageView
     }()
 
-    var likes: UILabel = {
+    let likes: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textColor = .black
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = true
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(tapLike))
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
-    var views: UILabel = {
+    let views: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textColor = .black
@@ -54,29 +57,7 @@ final class ShowPostViewController: UIViewController {
         return label
     }()
 
-    private let stackViewHeaderVertical: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 16
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-
-    private let stackViewVertical: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 16
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-
-    private let stackViewHorizontal: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.spacing = 16
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
+    private let tapGestureRecognizer = UITapGestureRecognizer()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,14 +68,12 @@ final class ShowPostViewController: UIViewController {
 
         view.addSubview(author)
         view.addSubview(imageNews)
-        view.addSubview(stackViewVertical)
-
-        stackViewVertical.addArrangedSubview(descriptionText)
-        stackViewVertical.addArrangedSubview(stackViewHorizontal)
-        stackViewHorizontal.addArrangedSubview(likes)
-        stackViewHorizontal.addArrangedSubview(views)
+        view.addSubview(descriptionText)
+        view.addSubview(likes)
+        view.addSubview(views)
 
         installConstrains()
+        installRecognizer()
     }
 
     private func installConstrains() {
@@ -110,11 +89,30 @@ final class ShowPostViewController: UIViewController {
             imageNews.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             imageNews.heightAnchor.constraint(equalToConstant: size),
 
-            stackViewVertical.topAnchor.constraint(equalTo: imageNews.bottomAnchor, constant: 16),
-            stackViewVertical.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            stackViewVertical.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            descriptionText.topAnchor.constraint(equalTo: imageNews.bottomAnchor, constant: 16),
+            descriptionText.leadingAnchor.constraint(equalTo: author.leadingAnchor),
+            descriptionText.trailingAnchor.constraint(equalTo: author.trailingAnchor),
 
+            likes.topAnchor.constraint(equalTo: descriptionText.bottomAnchor, constant: 16),
+            likes.leadingAnchor.constraint(equalTo: author.leadingAnchor),
+
+            views.topAnchor.constraint(equalTo: descriptionText.bottomAnchor, constant: 16),
+            views.trailingAnchor.constraint(equalTo: author.trailingAnchor),
         ])
     }
 
+    private func installRecognizer() {
+        self.tapGestureRecognizer.addTarget(self, action: #selector(tapLiked))
+        self.likes.addGestureRecognizer(self.tapGestureRecognizer)
+    }
+
+    @objc func tapLiked() {
+        numberOfClicks += 1
+        let tmpNumber = Int(likes.text!.components(separatedBy: CharacterSet.decimalDigits.inverted).joined())! + 1
+        likes.text = "Likes: \(tmpNumber)"
+    }
+
+    deinit {
+        likeDelegate?.tapLiked(index: idPost, numberOfClicks: numberOfClicks)
+    }
 }

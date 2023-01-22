@@ -28,14 +28,10 @@ final class LogInViewController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.textColor = .black
         textField.backgroundColor = .systemGray6
-        textField.layer.cornerRadius = 10
-        textField.layer.borderWidth = 0.5
-        textField.layer.borderColor = UIColor.lightGray.cgColor
         textField.tintColor = UIColor.blue
         textField.autocapitalizationType = .none
         textField.textAlignment = .left
         textField.placeholder = "Email of phone"
-        textField.addTarget(self, action: #selector(statusTextChanged), for: .editingChanged)
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -49,15 +45,11 @@ final class LogInViewController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.textColor = .black
         textField.backgroundColor = .systemGray6
-        textField.layer.cornerRadius = 10
-        textField.layer.borderWidth = 0.5
-        textField.layer.borderColor = UIColor.lightGray.cgColor
         textField.tintColor = UIColor.blue
         textField.autocapitalizationType = .none
         textField.textAlignment = .left
         textField.isSecureTextEntry = true
         textField.placeholder = "Password"
-        textField.addTarget(self, action: #selector(statusTextChanged), for: .editingChanged)
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -80,12 +72,45 @@ final class LogInViewController: UIViewController {
         return button
     }()
 
+    private let labelError: UILabel = {
+        let label = UILabel()
+        label.text = "Invalid password: The number of password characters is less than 8"
+        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.textColor = .red
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let viewLogin: UIView = {
+        let viewLogin = UIView()
+        viewLogin.backgroundColor = UIColor.lightGray
+        viewLogin.translatesAutoresizingMaskIntoConstraints = false
+        return viewLogin
+    }()
+
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: 1000)
+        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         scrollView.keyboardDismissMode = .interactive
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
+    }()
+
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillProportionally
+        stackView.alignment = .fill
+        stackView.spacing = 0
+        stackView.layer.cornerRadius = 10
+        stackView.layer.borderWidth = 0.5
+        stackView.layer.borderColor = UIColor.lightGray.cgColor
+        stackView.clipsToBounds = true
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
     }()
 
     override func viewDidLoad() {
@@ -95,9 +120,12 @@ final class LogInViewController: UIViewController {
 
         self.view.backgroundColor = .white
         self.scrollView.addSubview(imageView)
-        self.scrollView.addSubview(textFieldLogin)
-        self.scrollView.addSubview(textFieldPassword)
+        self.scrollView.addSubview(stackView)
+        self.stackView.addArrangedSubview(textFieldLogin)
+        self.stackView.addArrangedSubview(viewLogin)
+        self.stackView.addArrangedSubview(textFieldPassword)
         self.scrollView.addSubview(button)
+        self.scrollView.addSubview(labelError)
         self.view.addSubview(scrollView)
 
         installConstrains()
@@ -106,6 +134,19 @@ final class LogInViewController: UIViewController {
         recognizer.numberOfTapsRequired = 1
         recognizer.numberOfTouchesRequired = 1
         scrollView.addGestureRecognizer(recognizer)
+
+        textFieldLogin.delegate = self
+        textFieldPassword.delegate = self
+
+        NotificationCenter.default.addObserver(self,
+            selector: #selector(adjustInsetForKeyboard(_:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(self,
+            selector: #selector(adjustInsetForKeyboard(_:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil)
     }
 
     private func installConstrains() {
@@ -120,50 +161,40 @@ final class LogInViewController: UIViewController {
             imageView.widthAnchor.constraint(equalToConstant: 100),
             imageView.heightAnchor.constraint(equalToConstant: 100),
 
-            textFieldLogin.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 120),
-            textFieldLogin.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            textFieldLogin.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            textFieldLogin.heightAnchor.constraint(equalToConstant: 50),
+            stackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 120),
+            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            stackView.heightAnchor.constraint(equalToConstant: 100),
 
-            textFieldPassword.topAnchor.constraint(equalTo: textFieldLogin.bottomAnchor),
-            textFieldPassword.leadingAnchor.constraint(equalTo: textFieldLogin.leadingAnchor),
-            textFieldPassword.trailingAnchor.constraint(equalTo: textFieldLogin.trailingAnchor),
-            textFieldPassword.heightAnchor.constraint(equalTo: textFieldLogin.heightAnchor),
+            button.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 16),
+            button.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+            button.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            button.heightAnchor.constraint(equalToConstant: 50),
 
-            button.topAnchor.constraint(equalTo: textFieldPassword.bottomAnchor, constant: 16),
-            button.leadingAnchor.constraint(equalTo: textFieldLogin.leadingAnchor),
-            button.trailingAnchor.constraint(equalTo: textFieldLogin.trailingAnchor),
-            button.heightAnchor.constraint(equalTo: textFieldLogin.heightAnchor),
+            labelError.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 16),
+            labelError.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+            labelError.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            labelError.heightAnchor.constraint(equalTo: stackView.heightAnchor),
+
+            viewLogin.heightAnchor.constraint(equalToConstant: 0.5),
         ])
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        subscribeKeyboardEvents()
+    @objc func adjustInsetForKeyboard(_ notification: NSNotification) {
+        guard let userInfo = notification.userInfo else { return }
+
+        let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+
+        let show = (notification.name == UIResponder.keyboardWillShowNotification) ? true : false
+
+        let bottomInset = (keyboardFrame.height + 20) * (show ? 1 : 0)
+        scrollView.contentInset.bottom = bottomInset
+        scrollView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self)
-    }
-
-    private func subscribeKeyboardEvents() {
-        NotificationCenter.default.addObserver(self, selector: #selector(kbWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(kbWillHide), name: UIResponder.keyboardDidHideNotification, object: nil)
-    }
-
-    @objc func kbWillShow(_ notification: Notification) {
-        guard let kbFrameSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-        self.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: kbFrameSize.height - self.view.safeAreaInsets.bottom + 20, right: 0)
-
-    }
-
-    @objc func kbWillHide() {
-        self.scrollView.contentInset = .zero
-    }
-
-    @objc private func statusTextChanged() {
-        subscribeKeyboardEvents()
     }
 
     @objc func touch() {
@@ -182,15 +213,15 @@ final class LogInViewController: UIViewController {
             return
         }
 
-        guard password.count > 7  else {
-            let alert = UIAlertController(title: "Acces denied", message: "The number of password characters is less than 8", preferredStyle: UIAlertController.Style.alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default))
-            self.present(alert, animated: true, completion: nil)
+        guard password.count > 7 else {
+            labelError.isHidden = false
             return
         }
 
+        labelError.isHidden = true
+
         guard self.login == login && self.password == password else {
-            let alert = UIAlertController(title: "Acces denied", message: "You didn't write correct login or password", preferredStyle: UIAlertController.Style.alert)
+            let alert = UIAlertController(title: "Invalid login or password", message: "Please, enter correct login and password", preferredStyle: UIAlertController.Style.alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default))
             self.present(alert, animated: true, completion: nil)
             return
@@ -198,6 +229,14 @@ final class LogInViewController: UIViewController {
 
         let profileViewController = ProfileViewController()
         self.navigationController?.pushViewController(profileViewController, animated: true)
+    }
+}
+
+extension LogInViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
 
